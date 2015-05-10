@@ -4,23 +4,21 @@ buildscript {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.0.0'
+        classpath 'com.android.tools.build:gradle:1.2.3'
         classpath 'org.robovm:robovm-gradle-plugin:1.2.0'
     }
 }
 
 allprojects {
-    apply plugin: "eclipse"
     apply plugin: "idea"
 
-    version = '1.0'
+    version = '1.7.5'
     ext {
+        versionCode = 1
         appName = 'pixel-dungeon-libgdx'
+        appId = 'com.skynet67.pixeldungeon'
         gdxVersion = '1.6.0'
         roboVMVersion = '1.2.0'
-        box2DLightsVersion = '1.3'
-        ashleyVersion = '1.4.0'
-        aiVersion = '1.5.0'
     }
 
     repositories {
@@ -73,12 +71,17 @@ project(":ios") {
 project(":core") {
     apply plugin: "java"
 
-
     dependencies {
+        compile project(":PD-Classes")
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
     }
 }
 
-tasks.eclipse.doLast {
-    delete ".project"
+project(":PD-Classes") {
+    apply plugin: "java"
+
+    dependencies {
+        compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+        compile "org.json:json:20140107" //don't modify it. newer version has some issues when compiling for iOS
+    }
 }
