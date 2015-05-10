@@ -17,35 +17,16 @@
 
 package com.watabou.noosa;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.media.AudioManager;
-import android.opengl.GLSurfaceView;
-import android.os.Bundle;
-import android.os.Vibrator;
-import android.util.DisplayMetrics;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
-import android.view.SurfaceHolder;
-import android.view.View;
-
+import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.watabou.glscripts.Script;
 import com.watabou.gltextures.TextureCache;
-import com.watabou.input.Keys;
-import com.watabou.input.Touchscreen;
 import com.watabou.noosa.audio.Music;
 import com.watabou.noosa.audio.Sample;
-import com.watabou.utils.BitmapCache;
 import com.watabou.utils.SystemTime;
 
-import java.util.ArrayList;
-
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
-
-public class Game extends Activity implements GLSurfaceView.Renderer, View.OnTouchListener {
+public class Game extends ApplicationAdapter {
 
     public static Game instance;
 
@@ -71,18 +52,95 @@ public class Game extends Activity implements GLSurfaceView.Renderer, View.OnTou
     protected long now;
     // Milliseconds passed since previous update
     protected long step;
-    protected GLSurfaceView view;
-    protected SurfaceHolder holder;
-
-    // Accumulated touch events
-    protected ArrayList<MotionEvent> motionEvents = new ArrayList<MotionEvent>();
-
-    // Accumulated key events
-    protected ArrayList<KeyEvent> keysEvents = new ArrayList<KeyEvent>();
 
     public Game(Class<? extends Scene> c) {
         super();
         sceneClass = c;
+    }
+
+    @Override
+    public void create () {
+        instance = this;
+
+        density = Gdx.graphics.getDensity();
+
+        // TODO: Is this right?
+        onSurfaceCreated();
+    }
+
+    @Override
+    public void resize (int width, int height) {
+        Gdx.gl.glViewport(0, 0, width, height);
+
+        if (width != Game.width || height != Game.height) {
+            Game.width = width;
+            Game.height = height;
+
+            Scene sc = scene();
+            if (sc != null) {
+                TextureCache.reload();
+                Camera.reset();
+                switchScene(sc.getClass());
+            }
+        }
+    }
+
+    @Override
+    public void render () {
+        if (width == 0 || height == 0) {
+            return;
+        }
+
+        SystemTime.tick();
+        long rightNow = SystemTime.now;
+        step = (now == 0 ? 0 : rightNow - now);
+        now = rightNow;
+
+        step();
+
+        NoosaScript.get().resetCamera();
+        Gdx.gl.glScissor( 0, 0, width, height );
+        Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT );
+        draw();
+    }
+
+    @Override
+    public void pause () {
+        if (scene != null) {
+            scene.pause();
+        }
+
+        Script.reset();
+
+        Music.INSTANCE.pause();
+        Sample.INSTANCE.pause();
+    }
+
+    @Override
+    public void resume () {
+        now = 0;
+
+        Music.INSTANCE.resume();
+        Sample.INSTANCE.resume();
+    }
+
+    @Override
+    public void dispose () {
+        destroyGame();
+
+        Music.INSTANCE.mute();
+        Sample.INSTANCE.reset();
+    }
+
+    public void onSurfaceCreated() {
+        Gdx.gl.glEnable( GL20.GL_BLEND );
+        // For premultiplied alpha:
+        // Gdx.gl.glBlendFunc( GL20.GL_ONE, GL20.GL_ONE_MINUS_SRC_ALPHA );
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
+        Gdx.gl.glEnable(GL20.GL_SCISSOR_TEST);
+
+        TextureCache.reload();
     }
 
     public static void resetScene() {
@@ -99,149 +157,7 @@ public class Game extends Activity implements GLSurfaceView.Renderer, View.OnTou
     }
 
     public static void vibrate(int milliseconds) {
-        ((Vibrator) instance.getSystemService(VIBRATOR_SERVICE)).vibrate(milliseconds);
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        BitmapCache.context = TextureCache.context = instance = this;
-
-        DisplayMetrics m = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(m);
-        density = m.density;
-
-        try {
-            version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-        } catch (NameNotFoundException e) {
-            version = "???";
-        }
-
-        setVolumeControlStream(AudioManager.STREAM_MUSIC);
-
-        view = new GLSurfaceView(this);
-        view.setEGLContextClientVersion(2);
-        view.setEGLConfigChooser(false);
-        view.setRenderer(this);
-        view.setOnTouchListener(this);
-        setContentView(view);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        now = 0;
-        view.onResume();
-
-        Music.INSTANCE.resume();
-        Sample.INSTANCE.resume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        if (scene != null) {
-            scene.pause();
-        }
-
-        view.onPause();
-        Script.reset();
-
-        Music.INSTANCE.pause();
-        Sample.INSTANCE.pause();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        destroyGame();
-
-        Music.INSTANCE.mute();
-        Sample.INSTANCE.reset();
-    }
-
-    @SuppressLint({"Recycle", "ClickableViewAccessibility"})
-    @Override
-    public boolean onTouch(View view, MotionEvent event) {
-        synchronized (motionEvents) {
-            motionEvents.add(MotionEvent.obtain(event));
-        }
-        return true;
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-
-        if (keyCode == Keys.VOLUME_DOWN ||
-                keyCode == Keys.VOLUME_UP) {
-
-            return false;
-        }
-
-        synchronized (motionEvents) {
-            keysEvents.add(event);
-        }
-        return true;
-    }
-
-    @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-
-        if (keyCode == Keys.VOLUME_DOWN ||
-                keyCode == Keys.VOLUME_UP) {
-
-            return false;
-        }
-
-        synchronized (motionEvents) {
-            keysEvents.add(event);
-        }
-        return true;
-    }
-
-    @Override
-    public void onDrawFrame(GL10 gl) {
-
-        if (width == 0 || height == 0) {
-            return;
-        }
-
-        SystemTime.tick();
-        long rightNow = SystemTime.now;
-        step = (now == 0 ? 0 : rightNow - now);
-        now = rightNow;
-
-        step();
-
-        NoosaScript.get().resetCamera();
-        GL20.glScissor(0, 0, width, height);
-        GL20.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        draw();
-    }
-
-    @Override
-    public void onSurfaceChanged(GL10 gl, int width, int height) {
-
-        GL20.glViewport(0, 0, width, height);
-
-        Game.width = width;
-        Game.height = height;
-
-    }
-
-    @Override
-    public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        GL20.glEnable(GL10.GL_BLEND);
-        // For premultiplied alpha:
-        // GL20.glBlendFunc( GL10.GL_ONE, GL10.GL_ONE_MINUS_SRC_ALPHA );
-        GL20.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-
-        GL20.glEnable(GL10.GL_SCISSOR_TEST);
-
-        TextureCache.reload();
+        Gdx.input.vibrate(milliseconds);
     }
 
     protected void destroyGame() {
@@ -289,16 +205,11 @@ public class Game extends Activity implements GLSurfaceView.Renderer, View.OnTou
     protected void update() {
         Game.elapsed = Game.timeScale * step * 0.001f;
 
-        synchronized (motionEvents) {
-            Touchscreen.processTouchEvents(motionEvents);
-            motionEvents.clear();
-        }
-        synchronized (keysEvents) {
-            Keys.processTouchEvents(keysEvents);
-            keysEvents.clear();
-        }
-
         scene.update();
         Camera.updateAll();
+    }
+
+    public void finish() {
+        Gdx.app.exit();
     }
 }
