@@ -2,7 +2,7 @@ package com.skynet67.pixeldungeon.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.skynet67.pixeldungeon.PixelDungeon;
+import com.watabou.pixeldungeon.PixelDungeon;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {

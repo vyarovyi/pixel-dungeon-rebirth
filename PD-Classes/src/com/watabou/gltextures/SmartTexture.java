@@ -34,8 +34,6 @@ public class SmartTexture extends Texture {
     public TextureWrap wModeH;
     public TextureWrap wModeV;
 
-    public Bitmap bitmap;
-
     public Atlas atlas;
 
     public SmartTexture(Bitmap bitmap) {

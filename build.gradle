@@ -16,7 +16,7 @@ allprojects {
     ext {
         versionCode = 1
         appName = 'pixel-dungeon-libgdx'
-        appId = 'com.skynet67.pixeldungeon'
+        appId = 'com.bravepixel.pixeldungeon'
         gdxVersion = '1.6.0'
         roboVMVersion = '1.2.0'
     }

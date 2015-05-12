@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2015 Oleg Dolya
+ * Copyright (C) 2012-2014  Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
 
 package com.watabou.glwrap;
 
+import com.badlogic.gdx.utils.IntMap;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -31,8 +33,12 @@ public class Quad {
 
     public static final int SIZE = VALUES.length;
 
-    private static ShortBuffer indices;
-    private static int indexSize = 0;
+    // TODO: check if this cache is growing too much, or find another solution
+    private static final IntMap<ShortBuffer> cache = new IntMap<ShortBuffer>();
+    public static final ShortBuffer INDICES_1 = getIndices(1);
+    static {
+        cache.put(1, INDICES_1);
+    }
 
     public static FloatBuffer create() {
         return ByteBuffer.
@@ -41,20 +47,20 @@ public class Quad {
                 asFloatBuffer();
     }
 
-    public static FloatBuffer createSet(int size) {
+    public static FloatBuffer createSet( int size ) {
         return ByteBuffer.
                 allocateDirect(size * 16 * Float.SIZE / 8).
                 order(ByteOrder.nativeOrder()).
                 asFloatBuffer();
     }
 
-    public static ShortBuffer getIndices(int size) {
+    public static ShortBuffer getIndices( int size ) {
 
-        if (size > indexSize) {
+        ShortBuffer indices = cache.get(size);
+        if (indices == null) {
 
             // TODO: Optimize it!
 
-            indexSize = size;
             indices = ByteBuffer.
                     allocateDirect(size * SIZE * Short.SIZE / 8).
                     order(ByteOrder.nativeOrder()).
@@ -63,25 +69,27 @@ public class Quad {
             short[] values = new short[size * 6];
             int pos = 0;
             int limit = size * 4;
-            for (int ofs = 0; ofs < limit; ofs += 4) {
-                values[pos++] = (short) (ofs + 0);
-                values[pos++] = (short) (ofs + 1);
-                values[pos++] = (short) (ofs + 2);
-                values[pos++] = (short) (ofs + 0);
-                values[pos++] = (short) (ofs + 2);
-                values[pos++] = (short) (ofs + 3);
+            for (int ofs=0; ofs < limit; ofs += 4) {
+                values[pos++] = (short)(ofs + 0);
+                values[pos++] = (short)(ofs + 1);
+                values[pos++] = (short)(ofs + 2);
+                values[pos++] = (short)(ofs + 0);
+                values[pos++] = (short)(ofs + 2);
+                values[pos++] = (short)(ofs + 3);
             }
 
-            indices.put(values);
+            indices.put( values );
             indices.position(0);
+
+            cache.put(size, indices);
         }
 
         return indices;
     }
 
-    public static void fill(float[] v,
-                            float x1, float x2, float y1, float y2,
-                            float u1, float u2, float v1, float v2) {
+    public static void fill( float[] v,
+                             float x1, float x2, float y1, float y2,
+                             float u1, float u2, float v1, float v2 ) {
 
         v[0] = x1;
         v[1] = y1;
@@ -95,16 +103,16 @@ public class Quad {
 
         v[8] = x2;
         v[9] = y2;
-        v[10] = u2;
-        v[11] = v2;
+        v[10]= u2;
+        v[11]= v2;
 
-        v[12] = x1;
-        v[13] = y2;
-        v[14] = u1;
-        v[15] = v2;
+        v[12]= x1;
+        v[13]= y2;
+        v[14]= u1;
+        v[15]= v2;
     }
 
-    public static void fillXY(float[] v, float x1, float x2, float y1, float y2) {
+    public static void fillXY( float[] v, float x1, float x2, float y1, float y2 ) {
 
         v[0] = x1;
         v[1] = y1;
@@ -115,11 +123,11 @@ public class Quad {
         v[8] = x2;
         v[9] = y2;
 
-        v[12] = x1;
-        v[13] = y2;
+        v[12]= x1;
+        v[13]= y2;
     }
 
-    public static void fillUV(float[] v, float u1, float u2, float v1, float v2) {
+    public static void fillUV( float[] v, float u1, float u2, float v1, float v2 ) {
 
         v[2] = u1;
         v[3] = v1;
@@ -127,10 +135,10 @@ public class Quad {
         v[6] = u2;
         v[7] = v1;
 
-        v[10] = u2;
-        v[11] = v2;
+        v[10]= u2;
+        v[11]= v2;
 
-        v[14] = u1;
-        v[15] = v2;
+        v[14]= u1;
+        v[15]= v2;
     }
 }

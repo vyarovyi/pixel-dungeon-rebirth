@@ -19,12 +19,17 @@ package com.watabou.noosa;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.watabou.glscripts.Script;
 import com.watabou.gltextures.TextureCache;
 import com.watabou.noosa.audio.Music;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.SystemTime;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class Game extends ApplicationAdapter {
 
@@ -53,9 +58,15 @@ public class Game extends ApplicationAdapter {
     // Milliseconds passed since previous update
     protected long step;
 
+    private final String basePath;
+
     public Game(Class<? extends Scene> c) {
         super();
         sceneClass = c;
+
+        //TODO fix this
+        //this.basePath = Gdx.files.getExternalStoragePath();//platformSupport.getBasePath();
+        this.basePath = "Saved Game/";
     }
 
     @Override
@@ -100,7 +111,7 @@ public class Game extends ApplicationAdapter {
 
         NoosaScript.get().resetCamera();
         Gdx.gl.glScissor( 0, 0, width, height );
-        Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT );
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         draw();
     }
 
@@ -212,4 +223,22 @@ public class Game extends ApplicationAdapter {
     public void finish() {
         Gdx.app.exit();
     }
+
+    public boolean deleteFile(String fileName) {
+        final FileHandle fh = Gdx.files.external(basePath != null ? basePath + fileName : fileName);
+        return fh.exists() && fh.delete();
+    }
+
+    public InputStream openFileInput(String fileName) throws IOException {
+        final FileHandle fh = Gdx.files.external(basePath != null ? basePath + fileName : fileName);
+        if (!fh.exists())
+            throw new IOException("File " + fileName + " doesn't exist");
+        return fh.read();
+    }
+
+    public OutputStream openFileOutput(String fileName) {
+        final FileHandle fh = Gdx.files.external(basePath != null ? basePath + fileName : fileName);
+        return fh.write(false);
+    }
+
 }

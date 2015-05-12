@@ -5,7 +5,7 @@ import org.robovm.apple.uikit.UIApplication;
 
 import com.badlogic.gdx.backends.iosrobovm.IOSApplication;
 import com.badlogic.gdx.backends.iosrobovm.IOSApplicationConfiguration;
-import com.skynet67.pixeldungeon.PixelDungeon;
+import com.bravepixel.pixeldungeon.PixelDungeon;
 
 public class IOSLauncher extends IOSApplication.Delegate {
     @Override

@@ -28,7 +28,7 @@ import java.nio.IntBuffer;
 import com.badlogic.gdx.graphics.Texture.*;
 
 public class Texture {
-    protected Bitmap bitmap;
+    public Bitmap bitmap;
     public boolean premultiplied = false;
 
     public Texture(Bitmap bitmap) {
