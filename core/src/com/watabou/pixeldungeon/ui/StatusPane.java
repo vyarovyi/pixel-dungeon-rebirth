@@ -17,7 +17,7 @@
  */
 package com.watabou.pixeldungeon.ui;
 
-import com.watabou.input.Touchscreen.Touch;
+import com.watabou.input.NoosaInputProcessor;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Image;
@@ -72,7 +72,7 @@ public class StatusPane extends Component {
 		
 		add( new TouchArea( 0, 1, 30, 30 ) {
 			@Override
-			protected void onClick( Touch touch ) {
+			protected void onClick( NoosaInputProcessor.Touch touch ) {
 				Image sprite = Dungeon.hero.sprite;
 				if (!sprite.isVisible()) {
 					Camera.main.focusOn( sprite );

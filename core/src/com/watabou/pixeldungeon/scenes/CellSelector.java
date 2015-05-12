@@ -17,14 +17,16 @@
  */
 package com.watabou.pixeldungeon.scenes;
 
-import com.watabou.input.Touchscreen.Touch;
+import com.watabou.input.NoosaInputProcessor;
+import com.watabou.noosa.Game;
 import com.watabou.noosa.TouchArea;
 import com.watabou.pixeldungeon.DungeonTilemap;
 import com.watabou.pixeldungeon.PixelDungeon;
+import com.watabou.pixeldungeon.input.GameAction;
 import com.watabou.utils.GameMath;
 import com.watabou.utils.PointF;
 
-public class CellSelector extends TouchArea {
+public class CellSelector extends TouchArea<GameAction> {
 
 	public Listener listener = null;
 	
@@ -40,7 +42,7 @@ public class CellSelector extends TouchArea {
 	}
 	
 	@Override
-	protected void onClick( Touch touch ) {
+	protected void onClick( NoosaInputProcessor.Touch touch ) {
 		if (dragging) {
 			
 			dragging = false;
@@ -67,12 +69,12 @@ public class CellSelector extends TouchArea {
 	}
 	
 	private boolean pinching = false;
-	private Touch another;
+	private NoosaInputProcessor.Touch another;
 	private float startZoom;
 	private float startSpan;
 	
 	@Override
-	protected void onTouchDown( Touch t ) {
+	protected void onTouchDown( NoosaInputProcessor.Touch t ) {
 
 		if (t != touch && another == null) {
 					
@@ -93,7 +95,7 @@ public class CellSelector extends TouchArea {
 	}
 	
 	@Override
-	protected void onTouchUp( Touch t ) {
+	protected void onTouchUp( NoosaInputProcessor.Touch t ) {
 		if (pinching && (t == touch || t == another)) {
 
 			pinching = false;
@@ -115,7 +117,7 @@ public class CellSelector extends TouchArea {
 	private PointF lastPos = new PointF();
 	
 	@Override
-	protected void onDrag( Touch t ) {
+	protected void onDrag( NoosaInputProcessor.Touch t ) {
 		 
 		camera.target = null;
 

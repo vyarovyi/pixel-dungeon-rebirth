@@ -17,12 +17,8 @@
  */
 package com.watabou.pixeldungeon.ui;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import com.watabou.input.Keys;
-import com.watabou.input.Keys.Key;
-import com.watabou.input.Touchscreen.Touch;
+import com.badlogic.gdx.Input;
+import com.watabou.input.NoosaInputProcessor;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Group;
@@ -30,10 +26,14 @@ import com.watabou.noosa.NinePatch;
 import com.watabou.noosa.TouchArea;
 import com.watabou.pixeldungeon.Chrome;
 import com.watabou.pixeldungeon.effects.ShadowBox;
+import com.watabou.pixeldungeon.input.GameAction;
 import com.watabou.pixeldungeon.scenes.PixelScene;
 import com.watabou.utils.Signal;
 
-public class Window extends Group implements Signal.Listener<Key> {
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class Window extends Group implements Signal.Listener<NoosaInputProcessor.Key<GameAction>> {
 
 	protected int width;
 	protected int height;
@@ -54,14 +54,14 @@ public class Window extends Group implements Signal.Listener<Key> {
 			
 	public Window( int width, int height, NinePatch chrome ) {
 		super();
-		
+
 		blocker = new TouchArea( 0, 0, PixelScene.uiCamera.width, PixelScene.uiCamera.height ) {
 			@Override
-			protected void onClick( Touch touch ) {
-				if (!Window.this.chrome.overlapsScreenPoint( 
-					(int)touch.current.x, 
-					(int)touch.current.y )) {
-					
+			protected void onClick( NoosaInputProcessor.Touch touch ) {
+				if (!Window.this.chrome.overlapsScreenPoint(
+						(int)touch.current.x,
+						(int)touch.current.y )) {
+
 					onBackPressed();
 				}
 			}
@@ -100,8 +100,8 @@ public class Window extends Group implements Signal.Listener<Key> {
 			camera.x / camera.zoom, 
 			camera.y / camera.zoom, 
 			chrome.width(), chrome.height );
-		
-		Keys.event.add( this );
+
+		Game.instance.getInputProcessor().addKeyListener(this);
 	}
 	
 	public void resize( int w, int h ) {
@@ -116,7 +116,7 @@ public class Window extends Group implements Signal.Listener<Key> {
 		camera.x = (int)(Game.width - camera.screenWidth()) / 2;
 		camera.y = (int)(Game.height - camera.screenHeight()) / 2;
 		
-		shadow.boxRect( camera.x / camera.zoom, camera.y / camera.zoom, chrome.width(), chrome.height );
+		shadow.boxRect(camera.x / camera.zoom, camera.y / camera.zoom, chrome.width(), chrome.height);
 	}
 	
 	public void hide() {
@@ -129,32 +129,45 @@ public class Window extends Group implements Signal.Listener<Key> {
 		super.destroy();
 		
 		Camera.remove( camera );
-		Keys.event.remove( this );
+		Game.instance.getInputProcessor().removeKeyListener(this);
 	}
 
-	@Override
-	public void onSignal( Key key ) {
-		if (key.pressed) {
-			switch (key.code) {
-			case Keys.BACK:
-				onBackPressed();			
-				break;
-			case Keys.MENU:
-				onMenuPressed();			
-				break;
-			}
-		}
-		
-		Keys.event.cancel();
-	}
-	
 	public void onBackPressed() {
 		hide();
 	}
 	
 	public void onMenuPressed() {
 	}
-	
+
+	@Override
+	public void onSignal( NoosaInputProcessor.Key<GameAction> key ) {
+		if (key.pressed) {
+			switch (key.code) {
+				case Input.Keys.BACK:
+				case Input.Keys.ESCAPE:
+					onBackPressed();
+					break;
+				case Input.Keys.MENU:
+					onMenuPressed();
+					break;
+				default:
+					onKeyDown(key);
+					break;
+			}
+		} else {
+			onKeyUp( key );
+		}
+
+		Game.instance.getInputProcessor().cancelKeyEvent();
+	}
+
+	protected void onKeyDown(NoosaInputProcessor.Key key) {
+	}
+
+	protected void onKeyUp( NoosaInputProcessor.Key<GameAction> key ) {
+	}
+
+
 	protected static class Highlighter {
 		
 		private static final Pattern HIGHLIGHTER	= Pattern.compile( "_(.*?)_" );

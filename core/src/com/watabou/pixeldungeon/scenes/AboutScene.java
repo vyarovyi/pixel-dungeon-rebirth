@@ -17,10 +17,10 @@
  */
 package com.watabou.pixeldungeon.scenes;
 
-import com.watabou.input.Touchscreen.Touch;
+import com.badlogic.gdx.Gdx;
+import com.watabou.input.NoosaInputProcessor;
 import com.watabou.noosa.BitmapTextMultiline;
 import com.watabou.noosa.Camera;
-import com.watabou.noosa.Game;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.TouchArea;
 import com.watabou.pixeldungeon.PixelDungeon;
@@ -64,7 +64,10 @@ public class AboutScene extends PixelScene {
 		
 		TouchArea hotArea = new TouchArea( link ) {
 			@Override
-			protected void onClick( Touch touch ) {
+			protected void onClick( NoosaInputProcessor.Touch touch ) {
+				Gdx.net.openURI("http://" + LNK);
+
+				//TODO run action for platform
 //				Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse( "http://" + LNK ) );
 //				Game.instance.startActivity( intent );
 			}

@@ -21,16 +21,20 @@ import com.badlogic.gdx.Gdx;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.audio.Music;
 import com.watabou.noosa.audio.Sample;
+import com.watabou.pixeldungeon.input.GameAction;
 import com.watabou.pixeldungeon.scenes.GameScene;
 import com.watabou.pixeldungeon.scenes.PixelScene;
 import com.watabou.pixeldungeon.scenes.TitleScene;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.PDPlatformSupport;
 
-public class PixelDungeon extends Game {
+public class PixelDungeon extends Game<GameAction> {
 	
-	public PixelDungeon() {
-		super( TitleScene.class );
-		
+	public PixelDungeon(final PDPlatformSupport<GameAction> platformSupport) {
+		super( TitleScene.class, platformSupport);
+
+		Game.version = platformSupport.getVersion();
+
 		com.watabou.utils.Bundle.addAlias( 
 			com.watabou.pixeldungeon.items.scrolls.ScrollOfUpgrade.class, 
 			"com.watabou.pixeldungeon.items.scrolls.ScrollOfEnhancement" );
@@ -174,16 +178,35 @@ public class PixelDungeon extends Game {
 	 */
 	
 	public static void landscape( boolean value ) {
-//		Game.instance.setRequestedOrientation( value ?
-//			ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE :
-//			ActivityInfo.SCREEN_ORIENTATION_PORTRAIT );
+		//Game.instance.setRequestedOrientation( value ?
+		//	ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE :
+		//	ActivityInfo.SCREEN_ORIENTATION_PORTRAIT );
+		//TODO: Make this able to work
 		Preferences.INSTANCE.put( Preferences.KEY_LANDSCAPE, value );
 	}
 	
 	public static boolean landscape() {
 		return width > height;
 	}
-	
+
+	public static void fullscreen(boolean value) {
+		final Preferences prefs = Preferences.INSTANCE;
+		if (value) {
+			prefs.put(Preferences.KEY_WINDOW_FULLSCREEN, true);
+
+			Gdx.graphics.setDisplayMode(Gdx.graphics.getDesktopDisplayMode().width, Gdx.graphics.getDesktopDisplayMode().height, true);
+		} else {
+			int w = prefs.getInt(Preferences.KEY_WINDOW_WIDTH, Preferences.DEFAULT_WINDOW_WIDTH);
+			int h = prefs.getInt(Preferences.KEY_WINDOW_HEIGHT, Preferences.DEFAULT_WINDOW_HEIGHT);
+			prefs.put(Preferences.KEY_WINDOW_FULLSCREEN, false);
+			Gdx.graphics.setDisplayMode(w, h, false);
+		}
+	}
+
+	public static boolean fullscreen() {
+		return Gdx.graphics.isFullscreen();
+	}
+
 	public static boolean immersed() {
 		return Preferences.INSTANCE.getBoolean( Preferences.KEY_IMMERSIVE, false );
 	}

@@ -23,15 +23,17 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.watabou.glscripts.Script;
 import com.watabou.gltextures.TextureCache;
+import com.watabou.input.NoosaInputProcessor;
 import com.watabou.noosa.audio.Music;
 import com.watabou.noosa.audio.Sample;
+import com.watabou.utils.PDPlatformSupport;
 import com.watabou.utils.SystemTime;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class Game extends ApplicationAdapter {
+public abstract class Game<GameActionType> extends ApplicationAdapter {
 
     public static Game instance;
 
@@ -58,15 +60,19 @@ public class Game extends ApplicationAdapter {
     // Milliseconds passed since previous update
     protected long step;
 
+    private final NoosaInputProcessor<GameActionType> inputProcessor;
+    private final PDPlatformSupport platformSupport;
+
+
     private final String basePath;
 
-    public Game(Class<? extends Scene> c) {
+    public Game(Class<? extends Scene> c, PDPlatformSupport<GameActionType> platformSupport ) {
         super();
         sceneClass = c;
 
-        //TODO fix this
-        //this.basePath = Gdx.files.getExternalStoragePath();//platformSupport.getBasePath();
-        this.basePath = "Saved Game/";
+        this.platformSupport = platformSupport;
+        this.inputProcessor = platformSupport.getInputProcessor();
+        this.basePath = platformSupport.getBasePath();
     }
 
     @Override
@@ -74,6 +80,9 @@ public class Game extends ApplicationAdapter {
         instance = this;
 
         density = Gdx.graphics.getDensity();
+
+        this.inputProcessor.init();
+        Gdx.input.setInputProcessor(this.inputProcessor);
 
         // TODO: Is this right?
         onSurfaceCreated();
@@ -241,4 +250,11 @@ public class Game extends ApplicationAdapter {
         return fh.write(false);
     }
 
+    public NoosaInputProcessor<GameActionType> getInputProcessor() {
+        return inputProcessor;
+    }
+
+    public PDPlatformSupport getPlatformSupport() {
+        return platformSupport;
+    }
 }

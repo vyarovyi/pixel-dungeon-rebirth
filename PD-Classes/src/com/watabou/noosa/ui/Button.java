@@ -17,11 +17,11 @@
 
 package com.watabou.noosa.ui;
 
-import com.watabou.input.Touchscreen.Touch;
+import com.watabou.input.NoosaInputProcessor;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.TouchArea;
 
-public class Button extends Component {
+public class Button<T> extends Component {
 
     public static float longClick = 1f;
 
@@ -32,36 +32,43 @@ public class Button extends Component {
 
     protected boolean processed;
 
+    public T hotKey = null;
+
     @Override
     protected void createChildren() {
-        hotArea = new TouchArea(0, 0, 0, 0) {
+        hotArea = new TouchArea<T>( 0, 0, 0, 0 ) {
             @Override
-            protected void onTouchDown(Touch touch) {
+            protected void onTouchDown(NoosaInputProcessor.Touch touch) {
                 pressed = true;
                 pressTime = 0;
                 processed = false;
                 Button.this.onTouchDown();
-            }
-
-            ;
-
+            };
             @Override
-            protected void onTouchUp(Touch touch) {
+            protected void onTouchUp(NoosaInputProcessor.Touch touch) {
                 pressed = false;
                 Button.this.onTouchUp();
-            }
-
-            ;
-
+            };
             @Override
-            protected void onClick(Touch touch) {
+            protected void onClick( NoosaInputProcessor.Touch touch ) {
                 if (!processed) {
-                    Button.this.onClick();
+                    if (NoosaInputProcessor.modifier && onLongClick()) {
+                        // Do nothing
+                    } else {
+                        Button.this.onClick();
+                    }
                 }
+            };
+            @Override
+            public boolean onKeyDown(NoosaInputProcessor.Key<T> key) {
+                return Button.this.onKeyDown(key);
             }
-
-            ;
+            @Override
+            public boolean onKeyUp(NoosaInputProcessor.Key<T> key) {
+                return Button.this.onKeyUp(key);
+            }
         };
+
         add(hotArea);
     }
 
@@ -89,23 +96,31 @@ public class Button extends Component {
     protected void onTouchDown() {
     }
 
-    ;
-
     protected void onTouchUp() {
     }
 
-    ;
-
     protected void onClick() {
     }
-
-    ;
 
     protected boolean onLongClick() {
         return false;
     }
 
-    ;
+    protected boolean onKeyDown(NoosaInputProcessor.Key<T> key) {
+        return false;
+    }
+    protected boolean onKeyUp(NoosaInputProcessor.Key<T> key) {
+        if (active && hotKey != null && key.action.equals(hotKey)) {
+            if (NoosaInputProcessor.modifier) {
+                return onLongClick();
+            } else {
+                onClick();
+                return true;
+            }
+        } else {
+            return false;
+        }
+    }
 
     @Override
     protected void layout() {

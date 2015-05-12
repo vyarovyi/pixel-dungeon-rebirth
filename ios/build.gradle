@@ -4,7 +4,7 @@ sourceCompatibility = '1.7'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 ext {
-	mainClassName = "com.skynet67.pixeldungeon.IOSLauncher"
+	mainClassName = "com.bravepixel.pixeldungeon.IOSLauncher"
 }
 
 // Extracts native libs (*.a) from the native-ios.jar and places them

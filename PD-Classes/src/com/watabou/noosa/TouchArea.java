@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2015 Oleg Dolya
+ * Copyright (C) 2012-2014  Oleg Dolya
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,60 +17,108 @@
 
 package com.watabou.noosa;
 
-import com.watabou.input.Touchscreen;
-import com.watabou.input.Touchscreen.Touch;
+import com.watabou.input.NoosaInputProcessor;
 import com.watabou.utils.Signal;
 
-public class TouchArea extends Visual implements Signal.Listener<Touchscreen.Touch> {
+public class TouchArea<T> extends Visual implements Signal.Listener<NoosaInputProcessor.Touch> {
 
     // Its target can be toucharea itself
-    public Visual target;
+    public final Visual target;
 
-    protected Touchscreen.Touch touch = null;
+    protected NoosaInputProcessor.Touch touch = null;
 
-    public TouchArea(Visual target) {
-        super(0, 0, 0, 0);
-        this.target = target;
+    private Signal.Listener<NoosaInputProcessor.Key<T>> keyListener = new Signal.Listener<NoosaInputProcessor.Key<T>>() {
+        @Override
+        public void onSignal(NoosaInputProcessor.Key<T> key) {
+            final boolean handled;
 
-        Touchscreen.event.add(this);
+            if (key.pressed) {
+                handled = onKeyDown(key);
+            } else {
+                handled = onKeyUp(key);
+            }
+
+            if (handled) {
+                Game.instance.getInputProcessor().cancelKeyEvent();
+            }
+        }
+    };
+
+    private Signal.Listener<NoosaInputProcessor.PDMouseEvent> mouseListener = new Signal.Listener<NoosaInputProcessor.PDMouseEvent>() {
+        @Override
+        public void onSignal(NoosaInputProcessor.PDMouseEvent event) {
+            final boolean handled;
+
+            handled = onMouseScroll(event.scroll);
+
+            if (handled) {
+                Game.instance.getInputProcessor().cancelMouseEvent();
+            }
+        }
+    };
+
+    public boolean onMouseScroll(int scroll) {
+        return false;
     }
 
-    public TouchArea(float x, float y, float width, float height) {
+    public boolean onKeyDown(NoosaInputProcessor.Key<T> key) {
+        return false;
+    }
+
+    public boolean onKeyUp(NoosaInputProcessor.Key<T> key) {
+        return false;
+    }
+
+    public TouchArea( Visual target ) {
+        super( 0, 0, 0, 0 );
+        this.target = target;
+
+        setupListeners();
+    }
+
+    public TouchArea( float x, float y, float width, float height ) {
         super(x, y, width, height);
         this.target = this;
 
         visible = false;
 
-        Touchscreen.event.add(this);
+        setupListeners();
+    }
+
+    private void setupListeners() {
+        NoosaInputProcessor<T> ip = Game.instance.<T>getInputProcessor();
+        ip.addTouchListener(this);
+        ip.addKeyListener(keyListener);
+        ip.addMouseListener(mouseListener);
     }
 
     @Override
-    public void onSignal(Touch touch) {
+    public void onSignal( NoosaInputProcessor.Touch touch ) {
 
         if (!isActive()) {
             return;
         }
 
-        boolean hit = touch != null && target.overlapsScreenPoint((int) touch.start.x, (int) touch.start.y);
+        boolean hit = touch != null && target.overlapsScreenPoint( (int)touch.start.x, (int)touch.start.y );
 
         if (hit) {
 
-            Touchscreen.event.cancel();
+            Game.instance.getInputProcessor().cancelTouchEvent();
 
             if (touch.down) {
 
                 if (this.touch == null) {
                     this.touch = touch;
                 }
-                onTouchDown(touch);
+                onTouchDown( touch );
 
             } else {
 
-                onTouchUp(touch);
+                onTouchUp( touch );
 
                 if (this.touch == touch) {
                     this.touch = null;
-                    onClick(touch);
+                    onClick( touch );
                 }
 
             }
@@ -78,25 +126,27 @@ public class TouchArea extends Visual implements Signal.Listener<Touchscreen.Tou
         } else {
 
             if (touch == null && this.touch != null) {
-                onDrag(this.touch);
-            } else if (this.touch != null && touch != null && !touch.down) {
-                onTouchUp(touch);
+                onDrag( this.touch );
+            }
+
+            else if (this.touch != null && touch != null && !touch.down) {
+                onTouchUp( touch );
                 this.touch = null;
             }
 
         }
     }
 
-    protected void onTouchDown(Touch touch) {
+    protected void onTouchDown( NoosaInputProcessor.Touch touch ) {
     }
 
-    protected void onTouchUp(Touch touch) {
+    protected void onTouchUp( NoosaInputProcessor.Touch touch ) {
     }
 
-    protected void onClick(Touch touch) {
+    protected void onClick( NoosaInputProcessor.Touch touch ) {
     }
 
-    protected void onDrag(Touch touch) {
+    protected void onDrag( NoosaInputProcessor.Touch touch ) {
     }
 
     public void reset() {
@@ -105,7 +155,10 @@ public class TouchArea extends Visual implements Signal.Listener<Touchscreen.Tou
 
     @Override
     public void destroy() {
-        Touchscreen.event.remove(this);
+        NoosaInputProcessor<T> ip = Game.instance.<T>getInputProcessor();
+        ip.removeMouseListener(mouseListener);
+        ip.removeKeyListener(keyListener);
+        ip.removeTouchListener(this);
         super.destroy();
     }
 }

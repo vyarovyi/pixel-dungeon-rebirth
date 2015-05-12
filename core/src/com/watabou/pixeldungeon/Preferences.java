@@ -20,7 +20,7 @@ package com.watabou.pixeldungeon;
 import com.badlogic.gdx.Gdx;
 import com.watabou.noosa.Game;
 
-enum Preferences {
+public enum Preferences {
 
 	INSTANCE;
 	
@@ -39,6 +39,13 @@ enum Preferences {
 
 	public static final String FILE_NAME = "bravepixel-pixeldungeon-prefs";
 
+	public static final String KEY_WINDOW_FULLSCREEN	= "windowFullscreen";
+	public static final String KEY_WINDOW_WIDTH			= "windowWidth";
+	public static final String KEY_WINDOW_HEIGHT		= "windowHeight";
+
+	public static final int DEFAULT_WINDOW_WIDTH = 480;
+	public static final int DEFAULT_WINDOW_HEIGHT = 800;
+
 	private com.badlogic.gdx.Preferences prefs;
 	
 	private com.badlogic.gdx.Preferences get() {
@@ -48,27 +55,27 @@ enum Preferences {
 		return prefs;
 	}
 	
-	int getInt( String key, int defValue  ) {
+	public int getInt( String key, int defValue  ) {
 		return get().getInteger( key, defValue );
 	}
-	
-	boolean getBoolean( String key, boolean defValue  ) {
+
+	public boolean getBoolean( String key, boolean defValue  ) {
 		return get().getBoolean( key, defValue );
 	}
-	
-	String getString( String key, String defValue  ) {
+
+	public String getString( String key, String defValue  ) {
 		return get().getString( key, defValue );
 	}
-	
-	void put( String key, int value ) {
+
+	public void put( String key, int value ) {
 		get().putInteger( key, value ).flush();
 	}
-	
-	void put( String key, boolean value ) {
+
+	public void put( String key, boolean value ) {
 		get().putBoolean( key, value ).flush();
 	}
-	
-	void put( String key, String value ) {
+
+	public void put( String key, String value ) {
 		get().putString( key, value ).flush();
 	}
 }

@@ -10,8 +10,6 @@ android {
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
         }
-
-        instrumentTest.setRoot('tests')
     }
 }
 
@@ -63,7 +61,7 @@ task run(type: Exec) {
     }
 
     def adb = path + "/platform-tools/adb"
-    commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.skynet67.pixeldungeon.android/com.skynet67.pixeldungeon.android.AndroidLauncher'
+    commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.bravepixel.pixeldungeon.android/com.bravepixel.pixeldungeon.android.AndroidLauncher'
 }
 
 // sets up the Android Idea project, using the old Ant based build.

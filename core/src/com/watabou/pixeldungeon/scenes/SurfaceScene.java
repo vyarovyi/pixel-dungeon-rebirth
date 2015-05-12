@@ -23,7 +23,7 @@ import com.watabou.gltextures.Gradient;
 import com.watabou.gltextures.SmartTexture;
 import com.watabou.glwrap.Matrix;
 import com.watabou.glwrap.Quad;
-import com.watabou.input.Touchscreen.Touch;
+import com.watabou.input.NoosaInputProcessor;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.ColorBlock;
 import com.watabou.noosa.Game;
@@ -133,7 +133,7 @@ public class SurfaceScene extends PixelScene {
 		window.add( pet );
 		
 		window.add( new TouchArea( sky ) {
-			protected void onClick( Touch touch ) {
+			protected void onClick( NoosaInputProcessor.Touch touch ) {
 				pet.jump();
 			};
 		} );

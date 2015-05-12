@@ -17,8 +17,12 @@
  */
 package com.watabou.pixeldungeon.windows;
 
+import com.badlogic.gdx.Application;
+import com.badlogic.gdx.Gdx;
 import com.watabou.noosa.Camera;
+import com.watabou.noosa.Game;
 import com.watabou.noosa.audio.Sample;
+import com.watabou.noosa.ui.Button;
 import com.watabou.pixeldungeon.Assets;
 import com.watabou.pixeldungeon.PixelDungeon;
 import com.watabou.pixeldungeon.scenes.PixelScene;
@@ -39,14 +43,19 @@ public class WndSettings extends Window {
 	private static final String TXT_MUSIC	= "Music";
 	
 	private static final String TXT_SOUND	= "Sound FX";
-	
+
+	private static final String TXT_BINDINGS	= "Key bindings";
+
 	private static final String TXT_BRIGHTNESS	= "Brightness";
 	
 	private static final String TXT_QUICKSLOT	= "Second quickslot";
 	
 	private static final String TXT_SWITCH_PORT	= "Switch to portrait";
 	private static final String TXT_SWITCH_LAND	= "Switch to landscape";
-	
+
+	private static final String TXT_SWITCH_FULL = "Switch to fullscreen";
+	private static final String TXT_SWITCH_WIN = "Switch to windowed";
+
 	private static final int WIDTH		= 112;
 	private static final int BTN_HEIGHT	= 20;
 	private static final int GAP 		= 2;
@@ -97,8 +106,8 @@ public class WndSettings extends Window {
 				}
 			};
 			btnScaleUp.setRect( 0, 0, WIDTH, BTN_HEIGHT );
-			btnScaleUp.checked( PixelDungeon.scaleUp() );
-			add( btnScaleUp );
+			btnScaleUp.checked(PixelDungeon.scaleUp());
+			add(btnScaleUp);
 			
 //			btnImmersive = new CheckBox( TXT_IMMERSIVE ) {
 //				@Override
@@ -137,7 +146,11 @@ public class WndSettings extends Window {
 		btnSound.setRect( 0, btnMusic.bottom() + GAP, WIDTH, BTN_HEIGHT );
 		btnSound.checked( PixelDungeon.soundFx() );
 		add( btnSound );
-		
+
+		Application.ApplicationType type = Gdx.app.getType();
+
+		Button lastBtn = btnSound;
+
 		if (inGame) {
 			
 			CheckBox btnBrightness = new CheckBox( TXT_BRIGHTNESS ) {
@@ -147,9 +160,9 @@ public class WndSettings extends Window {
 					PixelDungeon.brightness( checked() );
 				}
 			};
-			btnBrightness.setRect( 0, btnSound.bottom() + GAP, WIDTH, BTN_HEIGHT );
-			btnBrightness.checked( PixelDungeon.brightness() );
-			add( btnBrightness );
+			btnBrightness.setRect(0, btnSound.bottom() + GAP, WIDTH, BTN_HEIGHT);
+			btnBrightness.checked(PixelDungeon.brightness());
+			add(btnBrightness);
 			
 			CheckBox btnQuickslot = new CheckBox( TXT_QUICKSLOT ) {
 				@Override
@@ -158,26 +171,61 @@ public class WndSettings extends Window {
 					Toolbar.secondQuickslot( checked() );
 				}
 			};
-			btnQuickslot.setRect( 0, btnBrightness.bottom() + GAP, WIDTH, BTN_HEIGHT );
-			btnQuickslot.checked( Toolbar.secondQuickslot() );
+			btnQuickslot.setRect(0, btnBrightness.bottom() + GAP, WIDTH, BTN_HEIGHT);
+			btnQuickslot.checked(Toolbar.secondQuickslot());
 			add( btnQuickslot );
-			
-			resize( WIDTH, (int)btnQuickslot.bottom() );
+
+			lastBtn = btnQuickslot;
+
+//			resize( WIDTH, (int)btnQuickslot.bottom() );
 			
 		} else {
-			
+
+			if (type == Application.ApplicationType.Desktop) {
+
+				RedButton btnResolution = new RedButton(resolutionText()) {
+					@Override
+					protected void onClick() {
+						PixelDungeon.fullscreen(!PixelDungeon.fullscreen());
+					}
+				};
+				btnResolution.enable( PixelDungeon.instance.getPlatformSupport().isFullscreenEnabled() );
+				btnResolution.setRect(0, lastBtn.bottom() + GAP, WIDTH, BTN_HEIGHT);
+				add(btnResolution);
+
+				lastBtn = btnResolution;
+			}
+
+
 			RedButton btnOrientation = new RedButton( orientationText() ) {
 				@Override
 				protected void onClick() {
 					PixelDungeon.landscape( !PixelDungeon.landscape() );
 				}
 			};
-			btnOrientation.setRect( 0, btnSound.bottom() + GAP, WIDTH, BTN_HEIGHT );
+			btnOrientation.setRect(0, lastBtn.bottom() + GAP, WIDTH, BTN_HEIGHT);
 			add( btnOrientation );
-			
-			resize( WIDTH, (int)btnOrientation.bottom() );
+
+			lastBtn = btnOrientation;
+//			resize( WIDTH, (int)btnOrientation.bottom() );
 			
 		}
+
+		if (type == Application.ApplicationType.Desktop) {
+
+			RedButton btnKeymap = new RedButton(TXT_BINDINGS) {
+				@Override
+				protected void onClick() {
+					parent.add(new WndKeymap());
+				}
+			};
+			btnKeymap.setRect(0, lastBtn.bottom() + GAP, WIDTH, BTN_HEIGHT);
+			add(btnKeymap);
+
+			lastBtn = btnKeymap;
+		}
+
+		resize( WIDTH, (int)lastBtn.bottom() );
 	}
 	
 	private void zoom( float value ) {
@@ -190,11 +238,15 @@ public class WndSettings extends Window {
 	
 	private void updateEnabled() {
 		float zoom = Camera.main.zoom;
-		btnZoomIn.enable( zoom < PixelScene.maxZoom );
-		btnZoomOut.enable( zoom > PixelScene.minZoom );
+		btnZoomIn.enable(zoom < PixelScene.maxZoom);
+		btnZoomOut.enable(zoom > PixelScene.minZoom);
 	}
 	
 	private String orientationText() {
 		return PixelDungeon.landscape() ? TXT_SWITCH_PORT : TXT_SWITCH_LAND;
+	}
+
+	private String resolutionText() {
+		return Gdx.graphics.isFullscreen() ? TXT_SWITCH_WIN : TXT_SWITCH_FULL;
 	}
 }

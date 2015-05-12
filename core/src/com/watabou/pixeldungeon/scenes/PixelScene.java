@@ -18,9 +18,7 @@
 package com.watabou.pixeldungeon.scenes;
 
 
-
 import com.badlogic.gdx.Gdx;
-import com.watabou.input.Touchscreen;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.BitmapText.Font;
 import com.watabou.noosa.BitmapTextMultiline;
@@ -136,7 +134,7 @@ public class PixelScene extends Scene {
 	@Override
 	public void destroy() {
 		super.destroy();
-		Touchscreen.event.removeAll();
+		Game.instance.getInputProcessor().removeAllTouchEvent();
 	}
 
 	public static BitmapText.Font font;
