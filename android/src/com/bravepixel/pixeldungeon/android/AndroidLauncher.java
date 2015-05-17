@@ -21,6 +21,6 @@ public class AndroidLauncher extends AndroidApplication {
 		} catch (PackageManager.NameNotFoundException e) {
 			version = "???";
 		}
-		initialize(new PixelDungeon(new PDPlatformSupport<GameAction>(version, null, new AndroidInputProcessor())), config);
+		initialize(new PixelDungeon(new PDPlatformSupport<GameAction>(version, "BravePixel/PixelDungeon", new AndroidInputProcessor())), config);
 	}
 }

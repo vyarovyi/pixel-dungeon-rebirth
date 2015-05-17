@@ -19,11 +19,11 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 
 		if (SharedLibraryLoader.isMac) {
-			config.preferencesDirectory = "Library/Application Support/Pixel Dungeon/";
+			config.preferencesDirectory = "Library/Application Support/BravePixel/Pixel Dungeon/";
 		} else if (SharedLibraryLoader.isLinux) {
-			config.preferencesDirectory = ".watabou/pixel-dungeon/";
+			config.preferencesDirectory = ".bravepixel/pixel-dungeon/";
 		} else if (SharedLibraryLoader.isWindows) {
-			config.preferencesDirectory = "Saved Games/";
+			config.preferencesDirectory = "Saved Games/BravePixel/PixelDungeon";
 		}
 		// FIXME: This is a hack to get access to the preferences before we have an application setup
 		com.badlogic.gdx.Preferences prefs = new LwjglPreferences(Preferences.FILE_NAME, config.preferencesDirectory);
