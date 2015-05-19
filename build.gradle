@@ -82,6 +82,7 @@ project(":PD-Classes") {
 
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
-        compile "org.json:json:20140107" //don't modify it. newer version has some issues when compiling for iOS
+        compile "org.json:json:20140107"
+        //don't modify it. newer version has some issues when compiling for iOS
     }
 }

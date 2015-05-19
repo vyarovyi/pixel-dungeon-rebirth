@@ -52,9 +52,9 @@ public class Program {
         Gdx.gl.glLinkProgram(handle);
 
         IntBuffer status = BufferUtils.newIntBuffer(1);
-        Gdx.gl.glGetProgramiv( handle, GL20.GL_LINK_STATUS, status );
+        Gdx.gl.glGetProgramiv(handle, GL20.GL_LINK_STATUS, status);
         if (status.get() == GL20.GL_FALSE) {
-            throw new Error( Gdx.gl.glGetProgramInfoLog( handle ) );
+            throw new Error(Gdx.gl.glGetProgramInfoLog(handle));
         }
     }
 

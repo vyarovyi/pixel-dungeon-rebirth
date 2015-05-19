@@ -53,9 +53,9 @@ public class Shader {
         Gdx.gl.glCompileShader(handle);
 
         IntBuffer status = BufferUtils.newIntBuffer(1);
-        Gdx.gl.glGetShaderiv( handle, GL20.GL_COMPILE_STATUS, status);
+        Gdx.gl.glGetShaderiv(handle, GL20.GL_COMPILE_STATUS, status);
         if (status.get() == GL20.GL_FALSE) {
-            throw new Error( Gdx.gl.glGetShaderInfoLog( handle ) );
+            throw new Error(Gdx.gl.glGetShaderInfoLog(handle));
         }
     }
 

@@ -33,7 +33,7 @@ public class Renderbuffer {
 
     public Renderbuffer() {
         IntBuffer buf = BufferUtils.newIntBuffer(1);
-        Gdx.gl.glGenRenderbuffers( 1, buf );
+        Gdx.gl.glGenRenderbuffers(1, buf);
         id = buf.get();
     }
 
@@ -48,7 +48,7 @@ public class Renderbuffer {
     public void delete() {
         IntBuffer buf = BufferUtils.newIntBuffer(1);
         buf.put(id);
-        Gdx.gl.glDeleteRenderbuffers( 1, buf );
+        Gdx.gl.glDeleteRenderbuffers(1, buf);
     }
 
     public void storage(int format, int width, int height) {

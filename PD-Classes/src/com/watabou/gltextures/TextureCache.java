@@ -38,11 +38,11 @@ public class TextureCache {
 
             final Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
             // In the rest of the code ARGB is used
-            pixmap.setColor( (color << 8) | (color >>> 24) );
+            pixmap.setColor((color << 8) | (color >>> 24));
             pixmap.fill();
-            Bitmap bmp = new Bitmap( pixmap );
+            Bitmap bmp = new Bitmap(pixmap);
 
-            SmartTexture tx = new SmartTexture( bmp );
+            SmartTexture tx = new SmartTexture(bmp);
             all.put(key, tx);
 
             return tx;
@@ -60,14 +60,14 @@ public class TextureCache {
         } else {
 
             final Pixmap pixmap = new Pixmap(width, height, Pixmap.Format.RGBA8888);
-            for (int i=0; i < colors.length; i++) {
+            for (int i = 0; i < colors.length; i++) {
                 final int color = colors[i];
                 pixmap.drawPixel(i, 0, (color << 8) | (color >>> 24));
             }
 
-            Bitmap bmp = new Bitmap( pixmap );
+            Bitmap bmp = new Bitmap(pixmap);
 
-            SmartTexture tx = new SmartTexture( bmp );
+            SmartTexture tx = new SmartTexture(bmp);
             all.put(key, tx);
 
             return tx;
@@ -124,7 +124,7 @@ public class TextureCache {
 
             } else if (src instanceof Bitmap) {
 
-                return (Bitmap)src;
+                return (Bitmap) src;
 
             } else {
 

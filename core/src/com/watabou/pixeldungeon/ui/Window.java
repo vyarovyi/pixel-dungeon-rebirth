@@ -35,193 +35,191 @@ import java.util.regex.Pattern;
 
 public class Window extends Group implements Signal.Listener<NoosaInputProcessor.Key<GameAction>> {
 
-	protected int width;
-	protected int height;
-	
-	protected TouchArea blocker;
-	protected ShadowBox shadow;
-	protected NinePatch chrome;
-	
-	public static final int TITLE_COLOR = 0xFFFF44;
-	
-	public Window() {
-		this( 0, 0, Chrome.get( Chrome.Type.WINDOW ) );
-	}
-	
-	public Window( int width, int height ) {
-		this( width, height, Chrome.get( Chrome.Type.WINDOW ) );
-	}
-			
-	public Window( int width, int height, NinePatch chrome ) {
-		super();
+    public static final int TITLE_COLOR = 0xFFFF44;
+    protected int width;
+    protected int height;
+    protected TouchArea blocker;
+    protected ShadowBox shadow;
+    protected NinePatch chrome;
 
-		blocker = new TouchArea( 0, 0, PixelScene.uiCamera.width, PixelScene.uiCamera.height ) {
-			@Override
-			protected void onClick( NoosaInputProcessor.Touch touch ) {
-				if (!Window.this.chrome.overlapsScreenPoint(
-						(int)touch.current.x,
-						(int)touch.current.y )) {
+    public Window() {
+        this(0, 0, Chrome.get(Chrome.Type.WINDOW));
+    }
 
-					onBackPressed();
-				}
-			}
-		};
-		blocker.camera = PixelScene.uiCamera;
-		add( blocker );
-		
-		this.chrome = chrome;
-		
-		this.width = width;
-		this.height = height;
-		
-		shadow = new ShadowBox();
-		shadow.am = 0.5f;
-		shadow.camera = PixelScene.uiCamera.visible ? 
-			PixelScene.uiCamera : Camera.main;
-		add( shadow );
-		
-		chrome.x = -chrome.marginLeft();
-		chrome.y = -chrome.marginTop();
-		chrome.size( 
-			width - chrome.x + chrome.marginRight(),
-			height - chrome.y + chrome.marginBottom() );
-		add( chrome );
-		
-		camera = new Camera( 0, 0, 
-			(int)chrome.width, 
-			(int)chrome.height, 
-			PixelScene.defaultZoom );
-		camera.x = (int)(Game.width - camera.width * camera.zoom) / 2;
-		camera.y = (int)(Game.height - camera.height * camera.zoom) / 2;
-		camera.scroll.set( chrome.x, chrome.y );
-		Camera.add( camera );
-		
-		shadow.boxRect( 
-			camera.x / camera.zoom, 
-			camera.y / camera.zoom, 
-			chrome.width(), chrome.height );
+    public Window(int width, int height) {
+        this(width, height, Chrome.get(Chrome.Type.WINDOW));
+    }
 
-		Game.instance.getInputProcessor().addKeyListener(this);
-	}
-	
-	public void resize( int w, int h ) {
-		this.width = w;
-		this.height = h;
-		
-		chrome.size( 
-			width + chrome.marginHor(),
-			height + chrome.marginVer() );
-		
-		camera.resize( (int)chrome.width, (int)chrome.height );
-		camera.x = (int)(Game.width - camera.screenWidth()) / 2;
-		camera.y = (int)(Game.height - camera.screenHeight()) / 2;
-		
-		shadow.boxRect(camera.x / camera.zoom, camera.y / camera.zoom, chrome.width(), chrome.height);
-	}
-	
-	public void hide() {
-		parent.erase( this );
-		destroy();
-	}
-	
-	@Override
-	public void destroy() {
-		super.destroy();
-		
-		Camera.remove( camera );
-		Game.instance.getInputProcessor().removeKeyListener(this);
-	}
+    public Window(int width, int height, NinePatch chrome) {
+        super();
 
-	public void onBackPressed() {
-		hide();
-	}
-	
-	public void onMenuPressed() {
-	}
+        blocker = new TouchArea(0, 0, PixelScene.uiCamera.width, PixelScene.uiCamera.height) {
+            @Override
+            protected void onClick(NoosaInputProcessor.Touch touch) {
+                if (!Window.this.chrome.overlapsScreenPoint(
+                        (int) touch.current.x,
+                        (int) touch.current.y)) {
 
-	@Override
-	public void onSignal( NoosaInputProcessor.Key<GameAction> key ) {
-		if (key.pressed) {
-			switch (key.code) {
-				case Input.Keys.BACK:
-				case Input.Keys.ESCAPE:
-					onBackPressed();
-					break;
-				case Input.Keys.MENU:
-					onMenuPressed();
-					break;
-				default:
-					onKeyDown(key);
-					break;
-			}
-		} else {
-			onKeyUp( key );
-		}
+                    onBackPressed();
+                }
+            }
+        };
+        blocker.camera = PixelScene.uiCamera;
+        add(blocker);
 
-		Game.instance.getInputProcessor().cancelKeyEvent();
-	}
+        this.chrome = chrome;
 
-	protected void onKeyDown(NoosaInputProcessor.Key key) {
-	}
+        this.width = width;
+        this.height = height;
 
-	protected void onKeyUp( NoosaInputProcessor.Key<GameAction> key ) {
-	}
+        shadow = new ShadowBox();
+        shadow.am = 0.5f;
+        shadow.camera = PixelScene.uiCamera.visible ?
+                PixelScene.uiCamera : Camera.main;
+        add(shadow);
+
+        chrome.x = -chrome.marginLeft();
+        chrome.y = -chrome.marginTop();
+        chrome.size(
+                width - chrome.x + chrome.marginRight(),
+                height - chrome.y + chrome.marginBottom());
+        add(chrome);
+
+        camera = new Camera(0, 0,
+                (int) chrome.width,
+                (int) chrome.height,
+                PixelScene.defaultZoom);
+        camera.x = (int) (Game.width - camera.width * camera.zoom) / 2;
+        camera.y = (int) (Game.height - camera.height * camera.zoom) / 2;
+        camera.scroll.set(chrome.x, chrome.y);
+        Camera.add(camera);
+
+        shadow.boxRect(
+                camera.x / camera.zoom,
+                camera.y / camera.zoom,
+                chrome.width(), chrome.height);
+
+        Game.instance.getInputProcessor().addKeyListener(this);
+    }
+
+    public void resize(int w, int h) {
+        this.width = w;
+        this.height = h;
+
+        chrome.size(
+                width + chrome.marginHor(),
+                height + chrome.marginVer());
+
+        camera.resize((int) chrome.width, (int) chrome.height);
+        camera.x = (int) (Game.width - camera.screenWidth()) / 2;
+        camera.y = (int) (Game.height - camera.screenHeight()) / 2;
+
+        shadow.boxRect(camera.x / camera.zoom, camera.y / camera.zoom, chrome.width(), chrome.height);
+    }
+
+    public void hide() {
+        parent.erase(this);
+        destroy();
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+
+        Camera.remove(camera);
+        Game.instance.getInputProcessor().removeKeyListener(this);
+    }
+
+    public void onBackPressed() {
+        hide();
+    }
+
+    public void onMenuPressed() {
+    }
+
+    @Override
+    public void onSignal(NoosaInputProcessor.Key<GameAction> key) {
+        if (key.pressed) {
+            switch (key.code) {
+                case Input.Keys.BACK:
+                case Input.Keys.ESCAPE:
+                    onBackPressed();
+                    break;
+                case Input.Keys.MENU:
+                    onMenuPressed();
+                    break;
+                default:
+                    onKeyDown(key);
+                    break;
+            }
+        } else {
+            onKeyUp(key);
+        }
+
+        Game.instance.getInputProcessor().cancelKeyEvent();
+    }
+
+    protected void onKeyDown(NoosaInputProcessor.Key key) {
+    }
+
+    protected void onKeyUp(NoosaInputProcessor.Key<GameAction> key) {
+    }
 
 
-	protected static class Highlighter {
-		
-		private static final Pattern HIGHLIGHTER	= Pattern.compile( "_(.*?)_" );
-		private static final Pattern STRIPPER		= Pattern.compile( "[ \n]" );
-		
-		public String text;
-		
-		public boolean[] mask;
-		
-		public Highlighter( String text ) {
-			
-			String stripped = STRIPPER.matcher( text ).replaceAll( "" );
-			mask = new boolean[stripped.length()];
-			
-			Matcher m = HIGHLIGHTER.matcher( stripped );
-			
-			int pos = 0;
-			int lastMatch = 0;
-			
-			while (m.find()) {
-				pos += (m.start() - lastMatch);
-				int groupLen = m.group( 1 ).length();
-				for (int i=pos; i < pos + groupLen; i++) {
-					mask[i] = true;
-				}
-				pos += groupLen;
-				lastMatch = m.end();
-			}
-			
-			m.reset( text );
-			StringBuffer sb = new StringBuffer();
-			while (m.find()) {
-				m.appendReplacement( sb, m.group( 1 ) );
-			}
-			m.appendTail( sb );
-			
-			this.text = sb.toString();
-		}
-		
-		public boolean[] inverted() {
-			boolean[] result = new boolean[mask.length];
-			for (int i=0; i < result.length; i++) {
-				result[i] = !mask[i];
-			}
-			return result;
-		}
-		
-		public boolean isHighlighted() {
-			for (int i=0; i < mask.length; i++) {
-				if (mask[i]) {
-					return true;
-				}
-			}
-			return false;
-		}
-	}
+    protected static class Highlighter {
+
+        private static final Pattern HIGHLIGHTER = Pattern.compile("_(.*?)_");
+        private static final Pattern STRIPPER = Pattern.compile("[ \n]");
+
+        public String text;
+
+        public boolean[] mask;
+
+        public Highlighter(String text) {
+
+            String stripped = STRIPPER.matcher(text).replaceAll("");
+            mask = new boolean[stripped.length()];
+
+            Matcher m = HIGHLIGHTER.matcher(stripped);
+
+            int pos = 0;
+            int lastMatch = 0;
+
+            while (m.find()) {
+                pos += (m.start() - lastMatch);
+                int groupLen = m.group(1).length();
+                for (int i = pos; i < pos + groupLen; i++) {
+                    mask[i] = true;
+                }
+                pos += groupLen;
+                lastMatch = m.end();
+            }
+
+            m.reset(text);
+            StringBuffer sb = new StringBuffer();
+            while (m.find()) {
+                m.appendReplacement(sb, m.group(1));
+            }
+            m.appendTail(sb);
+
+            this.text = sb.toString();
+        }
+
+        public boolean[] inverted() {
+            boolean[] result = new boolean[mask.length];
+            for (int i = 0; i < result.length; i++) {
+                result[i] = !mask[i];
+            }
+            return result;
+        }
+
+        public boolean isHighlighted() {
+            for (int i = 0; i < mask.length; i++) {
+                if (mask[i]) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
 }

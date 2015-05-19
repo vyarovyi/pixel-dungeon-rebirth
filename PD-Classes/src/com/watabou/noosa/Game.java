@@ -47,6 +47,9 @@ public abstract class Game<GameActionType> extends ApplicationAdapter {
     public static String version;
     public static float timeScale = 1f;
     public static float elapsed = 0f;
+    private final NoosaInputProcessor<GameActionType> inputProcessor;
+    private final PDPlatformSupport platformSupport;
+    private final String basePath;
     // Current scene
     protected Scene scene;
     // New scene we are going to switch to
@@ -60,107 +63,13 @@ public abstract class Game<GameActionType> extends ApplicationAdapter {
     // Milliseconds passed since previous update
     protected long step;
 
-    private final NoosaInputProcessor<GameActionType> inputProcessor;
-    private final PDPlatformSupport platformSupport;
-
-
-    private final String basePath;
-
-    public Game(Class<? extends Scene> c, PDPlatformSupport<GameActionType> platformSupport ) {
+    public Game(Class<? extends Scene> c, PDPlatformSupport<GameActionType> platformSupport) {
         super();
         sceneClass = c;
 
         this.platformSupport = platformSupport;
         this.inputProcessor = platformSupport.getInputProcessor();
         this.basePath = platformSupport.getBasePath();
-    }
-
-    @Override
-    public void create () {
-        instance = this;
-
-        density = Gdx.graphics.getDensity();
-
-        this.inputProcessor.init();
-        Gdx.input.setInputProcessor(this.inputProcessor);
-
-        // TODO: Is this right?
-        onSurfaceCreated();
-    }
-
-    @Override
-    public void resize (int width, int height) {
-        Gdx.gl.glViewport(0, 0, width, height);
-
-        if (width != Game.width || height != Game.height) {
-            Game.width = width;
-            Game.height = height;
-
-            Scene sc = scene();
-            if (sc != null) {
-                TextureCache.reload();
-                Camera.reset();
-                switchScene(sc.getClass());
-            }
-        }
-    }
-
-    @Override
-    public void render () {
-        if (width == 0 || height == 0) {
-            return;
-        }
-
-        SystemTime.tick();
-        long rightNow = SystemTime.now;
-        step = (now == 0 ? 0 : rightNow - now);
-        now = rightNow;
-
-        step();
-
-        NoosaScript.get().resetCamera();
-        Gdx.gl.glScissor( 0, 0, width, height );
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        draw();
-    }
-
-    @Override
-    public void pause () {
-        if (scene != null) {
-            scene.pause();
-        }
-
-        Script.reset();
-
-        Music.INSTANCE.pause();
-        Sample.INSTANCE.pause();
-    }
-
-    @Override
-    public void resume () {
-        now = 0;
-
-        Music.INSTANCE.resume();
-        Sample.INSTANCE.resume();
-    }
-
-    @Override
-    public void dispose () {
-        destroyGame();
-
-        Music.INSTANCE.mute();
-        Sample.INSTANCE.reset();
-    }
-
-    public void onSurfaceCreated() {
-        Gdx.gl.glEnable( GL20.GL_BLEND );
-        // For premultiplied alpha:
-        // Gdx.gl.glBlendFunc( GL20.GL_ONE, GL20.GL_ONE_MINUS_SRC_ALPHA );
-        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-
-        Gdx.gl.glEnable(GL20.GL_SCISSOR_TEST);
-
-        TextureCache.reload();
     }
 
     public static void resetScene() {
@@ -178,6 +87,94 @@ public abstract class Game<GameActionType> extends ApplicationAdapter {
 
     public static void vibrate(int milliseconds) {
         Gdx.input.vibrate(milliseconds);
+    }
+
+    @Override
+    public void create() {
+        instance = this;
+
+        density = Gdx.graphics.getDensity();
+
+        this.inputProcessor.init();
+        Gdx.input.setInputProcessor(this.inputProcessor);
+
+        // TODO: Is this right?
+        onSurfaceCreated();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        Gdx.gl.glViewport(0, 0, width, height);
+
+        if (width != Game.width || height != Game.height) {
+            Game.width = width;
+            Game.height = height;
+
+            Scene sc = scene();
+            if (sc != null) {
+                TextureCache.reload();
+                Camera.reset();
+                switchScene(sc.getClass());
+            }
+        }
+    }
+
+    @Override
+    public void render() {
+        if (width == 0 || height == 0) {
+            return;
+        }
+
+        SystemTime.tick();
+        long rightNow = SystemTime.now;
+        step = (now == 0 ? 0 : rightNow - now);
+        now = rightNow;
+
+        step();
+
+        NoosaScript.get().resetCamera();
+        Gdx.gl.glScissor(0, 0, width, height);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        draw();
+    }
+
+    @Override
+    public void pause() {
+        if (scene != null) {
+            scene.pause();
+        }
+
+        Script.reset();
+
+        Music.INSTANCE.pause();
+        Sample.INSTANCE.pause();
+    }
+
+    @Override
+    public void resume() {
+        now = 0;
+
+        Music.INSTANCE.resume();
+        Sample.INSTANCE.resume();
+    }
+
+    @Override
+    public void dispose() {
+        destroyGame();
+
+        Music.INSTANCE.mute();
+        Sample.INSTANCE.reset();
+    }
+
+    public void onSurfaceCreated() {
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        // For premultiplied alpha:
+        // Gdx.gl.glBlendFunc( GL20.GL_ONE, GL20.GL_ONE_MINUS_SRC_ALPHA );
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
+        Gdx.gl.glEnable(GL20.GL_SCISSOR_TEST);
+
+        TextureCache.reload();
     }
 
     protected void destroyGame() {

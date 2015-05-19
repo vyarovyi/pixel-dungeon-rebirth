@@ -32,68 +32,68 @@ import com.watabou.pixeldungeon.ui.Window;
 
 public class AboutScene extends PixelScene {
 
-	private static final String TXT = 
-		"Code & graphics: Watabou\n" +
-		"Music: Cube_Code\n\n" + 
-		"This game is inspired by Brian Walker's Brogue. " +
-		"Try it on Windows, Mac OS or Linux - it's awesome! ;)\n\n" +
-		"Please visit official website for additional info:";
-	
-	private static final String LNK = "pixeldungeon.watabou.ru";
-	
-	@Override
-	public void create() {
-		super.create();
-		
-		BitmapTextMultiline text = createMultiline( TXT, 8 );
-		text.maxWidth = Math.min( Camera.main.width, 120 );
-		text.measure();
-		add( text );
-		
-		text.x = align( (Camera.main.width - text.width()) / 2 );
-		text.y = align( (Camera.main.height - text.height()) / 2 );
-		
-		BitmapTextMultiline link = createMultiline( LNK, 8 );
-		link.maxWidth = Math.min( Camera.main.width, 120 );
-		link.measure();
-		link.hardlight( Window.TITLE_COLOR );
-		add( link );
-		
-		link.x = text.x;
-		link.y = text.y + text.height();
-		
-		TouchArea hotArea = new TouchArea( link ) {
-			@Override
-			protected void onClick( NoosaInputProcessor.Touch touch ) {
-				Gdx.net.openURI("http://" + LNK);
+    private static final String TXT =
+            "Code & graphics: Watabou\n" +
+                    "Music: Cube_Code\n\n" +
+                    "This game is inspired by Brian Walker's Brogue. " +
+                    "Try it on Windows, Mac OS or Linux - it's awesome! ;)\n\n" +
+                    "Please visit official website for additional info:";
 
-				//TODO run action for platform
+    private static final String LNK = "pixeldungeon.watabou.ru";
+
+    @Override
+    public void create() {
+        super.create();
+
+        BitmapTextMultiline text = createMultiline(TXT, 8);
+        text.maxWidth = Math.min(Camera.main.width, 120);
+        text.measure();
+        add(text);
+
+        text.x = align((Camera.main.width - text.width()) / 2);
+        text.y = align((Camera.main.height - text.height()) / 2);
+
+        BitmapTextMultiline link = createMultiline(LNK, 8);
+        link.maxWidth = Math.min(Camera.main.width, 120);
+        link.measure();
+        link.hardlight(Window.TITLE_COLOR);
+        add(link);
+
+        link.x = text.x;
+        link.y = text.y + text.height();
+
+        TouchArea hotArea = new TouchArea(link) {
+            @Override
+            protected void onClick(NoosaInputProcessor.Touch touch) {
+                Gdx.net.openURI("http://" + LNK);
+
+                //TODO run action for platform
 //				Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse( "http://" + LNK ) );
 //				Game.instance.startActivity( intent );
-			}
-		};
-		add( hotArea );
-		
-		Image wata = Icons.WATA.get();
-		wata.x = align( (Camera.main.width - wata.width) / 2 );
-		wata.y = text.y - wata.height - 8;
-		add( wata );
-		
-		new Flare( 7, 64 ).color( 0x112233, true ).show( wata, 0 ).angularSpeed = +20;
-		
-		Archs archs = new Archs();
-		archs.setSize( Camera.main.width, Camera.main.height );
-		addToBack( archs );
-		
-		ExitButton btnExit = new ExitButton();
-		btnExit.setPos( Camera.main.width - btnExit.width(), 0 );
-		add( btnExit );
-		
-		fadeIn();
-	}
-	
-	@Override
-	protected void onBackPressed() {
-		PixelDungeon.switchNoFade( TitleScene.class );
-	}
+            }
+        };
+        add(hotArea);
+
+        Image wata = Icons.WATA.get();
+        wata.x = align((Camera.main.width - wata.width) / 2);
+        wata.y = text.y - wata.height - 8;
+        add(wata);
+
+        new Flare(7, 64).color(0x112233, true).show(wata, 0).angularSpeed = +20;
+
+        Archs archs = new Archs();
+        archs.setSize(Camera.main.width, Camera.main.height);
+        addToBack(archs);
+
+        ExitButton btnExit = new ExitButton();
+        btnExit.setPos(Camera.main.width - btnExit.width(), 0);
+        add(btnExit);
+
+        fadeIn();
+    }
+
+    @Override
+    protected void onBackPressed() {
+        PixelDungeon.switchNoFade(TitleScene.class);
+    }
 }

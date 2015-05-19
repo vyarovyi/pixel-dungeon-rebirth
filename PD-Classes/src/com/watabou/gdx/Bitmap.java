@@ -45,7 +45,7 @@ public class Bitmap extends Texture {
         super(data);
     }
 
-    public int getId(){
+    public int getId() {
         return glHandle;
     }
 }

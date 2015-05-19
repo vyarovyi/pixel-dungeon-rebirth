@@ -27,15 +27,15 @@ public class Gradient extends SmartTexture {
 
         super(createTexture(colors));
 
-        filter( Texture.TextureFilter.Linear, Texture.TextureFilter.Linear );
-        wrap( Texture.TextureWrap.ClampToEdge, Texture.TextureWrap.ClampToEdge );
+        filter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        wrap(Texture.TextureWrap.ClampToEdge, Texture.TextureWrap.ClampToEdge);
 
-        TextureCache.add( Gradient.class, this );
+        TextureCache.add(Gradient.class, this);
     }
 
     private static Bitmap createTexture(int[] colors) {
-        final Pixmap pixmap = new Pixmap( colors.length, 1, Pixmap.Format.RGBA8888 );
-        for (int i=0; i < colors.length; i++) {
+        final Pixmap pixmap = new Pixmap(colors.length, 1, Pixmap.Format.RGBA8888);
+        for (int i = 0; i < colors.length; i++) {
             final int color = colors[i];
             pixmap.drawPixel(i, 0, (color << 8) | (color >>> 24));
         }

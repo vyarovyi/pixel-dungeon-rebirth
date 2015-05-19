@@ -260,14 +260,6 @@ public class BitmapText extends Visual {
             lineHeight = baseLine = height;
         }
 
-        private boolean colorNotMatch(Pixmap pixmap, int x, int y, int color) {
-            int pixel = pixmap.getPixel(x, y);
-            if ((pixel & 0xFF) == 0) {
-                return color != 0;
-            }
-            return pixel != color;
-        }
-
         public static Font colorMarked(Bitmap bmp, int color, String chars) {
             Font font = new Font(TextureCache.get(bmp));
             font.splitBy(bmp, bmp.getHeight(), color, chars);
@@ -278,6 +270,14 @@ public class BitmapText extends Visual {
             Font font = new Font(TextureCache.get(bmp));
             font.splitBy(bmp, height, color, chars);
             return font;
+        }
+
+        private boolean colorNotMatch(Pixmap pixmap, int x, int y, int color) {
+            int pixel = pixmap.getPixel(x, y);
+            if ((pixel & 0xFF) == 0) {
+                return color != 0;
+            }
+            return pixel != color;
         }
 
         protected void splitBy(Bitmap bitmap, int height, int color, String chars) {

@@ -57,6 +57,22 @@ public class TouchArea<T> extends Visual implements Signal.Listener<NoosaInputPr
         }
     };
 
+    public TouchArea(Visual target) {
+        super(0, 0, 0, 0);
+        this.target = target;
+
+        setupListeners();
+    }
+
+    public TouchArea(float x, float y, float width, float height) {
+        super(x, y, width, height);
+        this.target = this;
+
+        visible = false;
+
+        setupListeners();
+    }
+
     public boolean onMouseScroll(int scroll) {
         return false;
     }
@@ -69,22 +85,6 @@ public class TouchArea<T> extends Visual implements Signal.Listener<NoosaInputPr
         return false;
     }
 
-    public TouchArea( Visual target ) {
-        super( 0, 0, 0, 0 );
-        this.target = target;
-
-        setupListeners();
-    }
-
-    public TouchArea( float x, float y, float width, float height ) {
-        super(x, y, width, height);
-        this.target = this;
-
-        visible = false;
-
-        setupListeners();
-    }
-
     private void setupListeners() {
         NoosaInputProcessor<T> ip = Game.instance.<T>getInputProcessor();
         ip.addTouchListener(this);
@@ -93,13 +93,13 @@ public class TouchArea<T> extends Visual implements Signal.Listener<NoosaInputPr
     }
 
     @Override
-    public void onSignal( NoosaInputProcessor.Touch touch ) {
+    public void onSignal(NoosaInputProcessor.Touch touch) {
 
         if (!isActive()) {
             return;
         }
 
-        boolean hit = touch != null && target.overlapsScreenPoint( (int)touch.start.x, (int)touch.start.y );
+        boolean hit = touch != null && target.overlapsScreenPoint((int) touch.start.x, (int) touch.start.y);
 
         if (hit) {
 
@@ -110,15 +110,15 @@ public class TouchArea<T> extends Visual implements Signal.Listener<NoosaInputPr
                 if (this.touch == null) {
                     this.touch = touch;
                 }
-                onTouchDown( touch );
+                onTouchDown(touch);
 
             } else {
 
-                onTouchUp( touch );
+                onTouchUp(touch);
 
                 if (this.touch == touch) {
                     this.touch = null;
-                    onClick( touch );
+                    onClick(touch);
                 }
 
             }
@@ -126,27 +126,25 @@ public class TouchArea<T> extends Visual implements Signal.Listener<NoosaInputPr
         } else {
 
             if (touch == null && this.touch != null) {
-                onDrag( this.touch );
-            }
-
-            else if (this.touch != null && touch != null && !touch.down) {
-                onTouchUp( touch );
+                onDrag(this.touch);
+            } else if (this.touch != null && touch != null && !touch.down) {
+                onTouchUp(touch);
                 this.touch = null;
             }
 
         }
     }
 
-    protected void onTouchDown( NoosaInputProcessor.Touch touch ) {
+    protected void onTouchDown(NoosaInputProcessor.Touch touch) {
     }
 
-    protected void onTouchUp( NoosaInputProcessor.Touch touch ) {
+    protected void onTouchUp(NoosaInputProcessor.Touch touch) {
     }
 
-    protected void onClick( NoosaInputProcessor.Touch touch ) {
+    protected void onClick(NoosaInputProcessor.Touch touch) {
     }
 
-    protected void onDrag( NoosaInputProcessor.Touch touch ) {
+    protected void onDrag(NoosaInputProcessor.Touch touch) {
     }
 
     public void reset() {

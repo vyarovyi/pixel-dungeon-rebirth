@@ -79,7 +79,7 @@ public class TextureFilm {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 RectF rect = new RectF(j * uw, i * vh, (j + 1) * uw, (i + 1) * vh);
-                rect.offset(patch.left, patch.top);
+                rect = rect.offset(patch.left, patch.top);
                 add(i * cols + j, rect);
             }
         }
