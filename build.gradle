@@ -12,11 +12,11 @@ buildscript {
 allprojects {
     apply plugin: "idea"
 
-    version = '1.7.5'
     ext {
-        versionCode = 1
         appName = 'Pixel Dungeon'
         appId = 'com.bravepixel.pixeldungeon'
+        buildVersion = '1.7.5a'
+
         gdxVersion = '1.6.0'
         roboVMVersion = '1.2.0'
     }
@@ -40,9 +40,24 @@ project(":desktop") {
 }
 
 project(":android") {
-    apply plugin: "android"
+    apply plugin: 'com.android.application'
 
     configurations { natives }
+
+    android {
+        buildToolsVersion "22.0.1"
+        compileSdkVersion 22
+
+        defaultConfig {
+            minSdkVersion 8
+            targetSdkVersion 22
+
+            versionCode 1
+
+            applicationId "$appId"
+            versionName "$buildVersion"
+        }
+    }
 
     dependencies {
         compile project(":core")

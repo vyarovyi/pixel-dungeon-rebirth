@@ -195,7 +195,8 @@ public class WndSettings extends Window {
             }
 
 
-            if(!Gdx.graphics.isFullscreen()) {
+            if(type == Application.ApplicationType.Android || type == Application.ApplicationType.iOS
+                || (!Gdx.graphics.isFullscreen() && type == Application.ApplicationType.Desktop)) {
                 RedButton btnOrientation = new RedButton(orientationText()) {
                     @Override
                     protected void onClick() {
