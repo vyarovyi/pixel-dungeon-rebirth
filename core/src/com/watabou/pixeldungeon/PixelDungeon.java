@@ -21,16 +21,14 @@ import com.badlogic.gdx.Gdx;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.audio.Music;
 import com.watabou.noosa.audio.Sample;
-import com.watabou.pixeldungeon.input.GameAction;
 import com.watabou.pixeldungeon.scenes.GameScene;
 import com.watabou.pixeldungeon.scenes.PixelScene;
 import com.watabou.pixeldungeon.scenes.TitleScene;
-import com.watabou.utils.Bundle;
 import com.watabou.utils.PDPlatformSupport;
 
-public class PixelDungeon extends Game<GameAction> {
-	
-	public PixelDungeon(final PDPlatformSupport<GameAction> platformSupport) {
+public class PixelDungeon extends Game {
+
+	public PixelDungeon(final PDPlatformSupport platformSupport) {
 		super( TitleScene.class, platformSupport);
 
 		Game.version = platformSupport.getVersion();
@@ -118,59 +116,59 @@ public class PixelDungeon extends Game<GameAction> {
 		Music.INSTANCE.enable( music() );
 		Sample.INSTANCE.enable( soundFx() );
 		
-		Sample.INSTANCE.load( 
-			Assets.SND_CLICK, 
-			Assets.SND_BADGE, 
-			Assets.SND_GOLD,
-			
-			Assets.SND_DESCEND,
-			Assets.SND_STEP,
-			Assets.SND_WATER,
-			Assets.SND_OPEN,
-			Assets.SND_UNLOCK,
-			Assets.SND_ITEM,
-			Assets.SND_DEWDROP, 
-			Assets.SND_HIT, 
-			Assets.SND_MISS,
-			Assets.SND_EAT,
-			Assets.SND_READ,
-			Assets.SND_LULLABY,
-			Assets.SND_DRINK,
-			Assets.SND_SHATTER,
-			Assets.SND_ZAP,
-			Assets.SND_LIGHTNING,
-			Assets.SND_LEVELUP,
-			Assets.SND_DEATH,
-			Assets.SND_CHALLENGE,
-			Assets.SND_CURSED,
-			Assets.SND_EVOKE,
-			Assets.SND_TRAP,
-			Assets.SND_TOMB,
-			Assets.SND_ALERT,
-			Assets.SND_MELD,
-			Assets.SND_BOSS,
-			Assets.SND_BLAST,
-			Assets.SND_PLANT,
-			Assets.SND_RAY,
-			Assets.SND_BEACON,
-			Assets.SND_TELEPORT,
-			Assets.SND_CHARMS,
-			Assets.SND_MASTERY,
-			Assets.SND_PUFF,
-			Assets.SND_ROCKS,
-			Assets.SND_BURNING,
-			Assets.SND_FALLING,
-			Assets.SND_GHOST,
-			Assets.SND_SECRET,
-			Assets.SND_BONES,
-			Assets.SND_BEE,
-			Assets.SND_DEGRADE,
-			Assets.SND_MIMIC );
+		Sample.INSTANCE.load(
+				Assets.SND_CLICK,
+				Assets.SND_BADGE,
+				Assets.SND_GOLD,
+
+				Assets.SND_DESCEND,
+				Assets.SND_STEP,
+				Assets.SND_WATER,
+				Assets.SND_OPEN,
+				Assets.SND_UNLOCK,
+				Assets.SND_ITEM,
+				Assets.SND_DEWDROP,
+				Assets.SND_HIT,
+				Assets.SND_MISS,
+				Assets.SND_EAT,
+				Assets.SND_READ,
+				Assets.SND_LULLABY,
+				Assets.SND_DRINK,
+				Assets.SND_SHATTER,
+				Assets.SND_ZAP,
+				Assets.SND_LIGHTNING,
+				Assets.SND_LEVELUP,
+				Assets.SND_DEATH,
+				Assets.SND_CHALLENGE,
+				Assets.SND_CURSED,
+				Assets.SND_EVOKE,
+				Assets.SND_TRAP,
+				Assets.SND_TOMB,
+				Assets.SND_ALERT,
+				Assets.SND_MELD,
+				Assets.SND_BOSS,
+				Assets.SND_BLAST,
+				Assets.SND_PLANT,
+				Assets.SND_RAY,
+				Assets.SND_BEACON,
+				Assets.SND_TELEPORT,
+				Assets.SND_CHARMS,
+				Assets.SND_MASTERY,
+				Assets.SND_PUFF,
+				Assets.SND_ROCKS,
+				Assets.SND_BURNING,
+				Assets.SND_FALLING,
+				Assets.SND_GHOST,
+				Assets.SND_SECRET,
+				Assets.SND_BONES,
+				Assets.SND_BEE,
+				Assets.SND_DEGRADE,
+				Assets.SND_MIMIC);
 	}
 
 	public static void switchNoFade( Class<? extends PixelScene> c ) {
 		PixelScene.noFade = true;
-		switchScene( c );
+		switchScene(c);
 	}
 	
 	/*
@@ -178,28 +176,30 @@ public class PixelDungeon extends Game<GameAction> {
 	 */
 	
 	public static void landscape( boolean value ) {
-		//Game.instance.setRequestedOrientation( value ?
-		//	ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE :
-		//	ActivityInfo.SCREEN_ORIENTATION_PORTRAIT );
-		//TODO: Make this able to work
 		Preferences.INSTANCE.put( Preferences.KEY_LANDSCAPE, value );
+
+		Game.instance.getPlatformSupport().onOrientationChanged(value);
 	}
 	
 	public static boolean landscape() {
 		return width > height;
 	}
 
-	public static void fullscreen(boolean value) {
+	public static void fullscreen(boolean isFullscreen) {
 		final Preferences prefs = Preferences.INSTANCE;
-		if (value) {
-			prefs.put(Preferences.KEY_WINDOW_FULLSCREEN, true);
+		prefs.put(Preferences.KEY_WINDOW_FULLSCREEN, isFullscreen);
 
+		if (isFullscreen) {
 			Gdx.graphics.setDisplayMode(Gdx.graphics.getDesktopDisplayMode().width, Gdx.graphics.getDesktopDisplayMode().height, true);
 		} else {
 			int w = prefs.getInt(Preferences.KEY_WINDOW_WIDTH, Preferences.DEFAULT_WINDOW_WIDTH);
 			int h = prefs.getInt(Preferences.KEY_WINDOW_HEIGHT, Preferences.DEFAULT_WINDOW_HEIGHT);
-			prefs.put(Preferences.KEY_WINDOW_FULLSCREEN, false);
-			Gdx.graphics.setDisplayMode(w, h, false);
+
+			if(prefs.getBoolean(Preferences.KEY_LANDSCAPE, false)) {
+				Gdx.graphics.setDisplayMode(h, w, false);
+			} else {
+				Gdx.graphics.setDisplayMode(w, h, false);
+			}
 		}
 	}
 
@@ -207,6 +207,11 @@ public class PixelDungeon extends Game<GameAction> {
 		return Gdx.graphics.isFullscreen();
 	}
 
+	// *** IMMERSIVE MODE ****
+	public static void immerse( boolean value ) {
+		Preferences.INSTANCE.put( Preferences.KEY_IMMERSIVE, value );
+		Game.instance.getPlatformSupport().onImmerseMode();
+	}
 	public static boolean immersed() {
 		return Preferences.INSTANCE.getBoolean( Preferences.KEY_IMMERSIVE, false );
 	}

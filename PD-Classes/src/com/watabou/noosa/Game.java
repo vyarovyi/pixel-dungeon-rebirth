@@ -33,7 +33,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public abstract class Game<GameActionType> extends ApplicationAdapter {
+public abstract class Game extends ApplicationAdapter {
 
     public static Game instance;
 
@@ -47,7 +47,7 @@ public abstract class Game<GameActionType> extends ApplicationAdapter {
     public static String version;
     public static float timeScale = 1f;
     public static float elapsed = 0f;
-    private final NoosaInputProcessor<GameActionType> inputProcessor;
+    private final NoosaInputProcessor inputProcessor;
     private final PDPlatformSupport platformSupport;
     private final String basePath;
     // Current scene
@@ -63,7 +63,7 @@ public abstract class Game<GameActionType> extends ApplicationAdapter {
     // Milliseconds passed since previous update
     protected long step;
 
-    public Game(Class<? extends Scene> c, PDPlatformSupport<GameActionType> platformSupport) {
+    public Game(Class<? extends Scene> c, PDPlatformSupport platformSupport) {
         super();
         sceneClass = c;
 
@@ -247,7 +247,7 @@ public abstract class Game<GameActionType> extends ApplicationAdapter {
         return fh.write(false);
     }
 
-    public NoosaInputProcessor<GameActionType> getInputProcessor() {
+    public NoosaInputProcessor getInputProcessor() {
         return inputProcessor;
     }
 

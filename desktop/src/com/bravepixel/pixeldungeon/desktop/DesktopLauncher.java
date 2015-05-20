@@ -1,6 +1,7 @@
 package com.bravepixel.pixeldungeon.desktop;
 
 import com.badlogic.gdx.Files;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl.LwjglPreferences;
@@ -57,6 +58,19 @@ public class DesktopLauncher {
 		public boolean isFullscreenEnabled() {
 			//	return Display.getPixelScaleFactor() == 1f;
 			return !SharedLibraryLoader.isMac;
+		}
+
+		@Override
+		public void onOrientationChanged(boolean isLandscape) {
+			final Preferences prefs = Preferences.INSTANCE;
+			int width = prefs.getInt(Preferences.KEY_WINDOW_WIDTH, Preferences.DEFAULT_WINDOW_WIDTH);
+			int height = prefs.getInt(Preferences.KEY_WINDOW_HEIGHT, Preferences.DEFAULT_WINDOW_HEIGHT);
+
+			if(isLandscape){
+				Gdx.graphics.setDisplayMode(height, width, false);
+			} else {
+				Gdx.graphics.setDisplayMode(width, height, false);
+			}
 		}
 	}
 }

@@ -2,12 +2,12 @@ package com.watabou.utils;
 
 import com.watabou.input.NoosaInputProcessor;
 
-public class PDPlatformSupport<GameActionType> {
+public class PDPlatformSupport{
     private final String version;
     private final String basePath;
-    private final NoosaInputProcessor<GameActionType> inputProcessor;
+    private final NoosaInputProcessor inputProcessor;
 
-    public PDPlatformSupport(String version, String basePath, NoosaInputProcessor<GameActionType> inputProcessor) {
+    public PDPlatformSupport(String version, String basePath, NoosaInputProcessor inputProcessor) {
         this.version = version;
         this.basePath = basePath;
         this.inputProcessor = inputProcessor;
@@ -21,11 +21,23 @@ public class PDPlatformSupport<GameActionType> {
         return basePath;
     }
 
-    public NoosaInputProcessor<GameActionType> getInputProcessor() {
+    public NoosaInputProcessor getInputProcessor() {
         return inputProcessor;
     }
 
     public boolean isFullscreenEnabled() {
         return false;
+    }
+
+    public boolean isImmersiveModeEnabled(){
+        return false;
+    }
+
+    public void onImmerseMode(){
+
+    }
+
+    public void onOrientationChanged(boolean isLandscape){
+
     }
 }
