@@ -8,8 +8,10 @@ import android.view.View;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
+import com.watabou.gltextures.TextureCache;
 import com.watabou.input.NoosaInputProcessor;
 import com.watabou.pixeldungeon.PixelDungeon;
+import com.watabou.utils.BitmapCache;
 import com.watabou.utils.PDPlatformSupport;
 
 public class AndroidLauncher extends AndroidApplication {
@@ -24,6 +26,10 @@ public class AndroidLauncher extends AndroidApplication {
         } catch (PackageManager.NameNotFoundException e) {
             version = "???";
         }
+
+        BitmapCache.clear();
+        TextureCache.clear();
+
         initialize(new PixelDungeon(new AndroidPlatformSupport(version, "BravePixel/PixelDungeon", new AndroidInputProcessor())), config);
     }
 

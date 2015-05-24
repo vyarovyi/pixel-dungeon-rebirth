@@ -22,10 +22,11 @@ import com.watabou.gdx.Bitmap;
 import com.watabou.glwrap.Texture;
 
 import java.util.HashMap;
+import java.util.WeakHashMap;
 
 public class TextureCache {
 
-    private static HashMap<Object, SmartTexture> all = new HashMap<Object, SmartTexture>();
+    private static WeakHashMap<Object, SmartTexture> all = new WeakHashMap<Object, SmartTexture>();
 
     public static SmartTexture createSolid(int color) {
         String key = "1x1:" + color;

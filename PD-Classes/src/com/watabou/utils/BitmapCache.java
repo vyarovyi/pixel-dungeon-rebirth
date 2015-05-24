@@ -20,12 +20,13 @@ package com.watabou.utils;
 import com.watabou.gdx.Bitmap;
 
 import java.util.HashMap;
+import java.util.WeakHashMap;
 
 public class BitmapCache {
 
     private static final String DEFAULT = "__default";
 
-    private static HashMap<String, Layer> layers = new HashMap<String, BitmapCache.Layer>();
+    private static WeakHashMap<String, Layer> layers = new WeakHashMap<String, BitmapCache.Layer>();
 
     public static Bitmap get(String assetName) {
         return get(DEFAULT, assetName);

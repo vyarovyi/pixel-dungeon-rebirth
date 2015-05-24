@@ -251,6 +251,12 @@ public class PixelScene extends Scene {
     public void destroy() {
         super.destroy();
         Game.instance.getInputProcessor().removeAllTouchEvent();
+
+        font1x = null;
+        font2x = null;
+        font3x = null;
+        font15x = null;
+        font25x = null;
     }
 
     protected void fadeIn() {

@@ -26,6 +26,7 @@ import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 
 import com.badlogic.gdx.graphics.Texture.*;
+import com.watabou.noosa.Game;
 
 public class Texture {
     public Bitmap bitmap;
@@ -58,7 +59,12 @@ public class Texture {
     }
 
     public void bind() {
-        bitmap.bind();
+        if(bitmap != null) {
+            bitmap.bind();
+        } else
+        {
+            System.console().writer().append("ERROR");
+        }
     }
 
     public void filter(TextureFilter minMode, TextureFilter maxMode) {
