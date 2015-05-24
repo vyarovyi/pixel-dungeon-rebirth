@@ -33,7 +33,7 @@ public class PDPlatformSupport{
         return false;
     }
 
-    public void onImmerseMode(){
+    public void updateImmersiveMode(){
 
     }
 

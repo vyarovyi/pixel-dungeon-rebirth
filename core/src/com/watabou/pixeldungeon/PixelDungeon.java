@@ -107,6 +107,8 @@ public class PixelDungeon extends Game {
 	public void create() {
 		super.create();
 
+		Game.instance.getPlatformSupport().updateImmersiveMode();
+
 		boolean landscape = Gdx.graphics.getWidth() > Gdx.graphics.getHeight();
 
 		if (Preferences.INSTANCE.getBoolean( Preferences.KEY_LANDSCAPE, false ) != landscape) {
@@ -210,7 +212,7 @@ public class PixelDungeon extends Game {
 	// *** IMMERSIVE MODE ****
 	public static void immerse( boolean value ) {
 		Preferences.INSTANCE.put( Preferences.KEY_IMMERSIVE, value );
-		Game.instance.getPlatformSupport().onImmerseMode();
+		Game.instance.getPlatformSupport().updateImmersiveMode();
 	}
 	public static boolean immersed() {
 		return Preferences.INSTANCE.getBoolean( Preferences.KEY_IMMERSIVE, false );
