@@ -26,7 +26,7 @@ import java.util.WeakHashMap;
 
 public class TextureCache {
 
-    private static WeakHashMap<Object, SmartTexture> all = new WeakHashMap<Object, SmartTexture>();
+    private static HashMap<Object, SmartTexture> all = new HashMap<Object, SmartTexture>();
 
     public static SmartTexture createSolid(int color) {
         String key = "1x1:" + color;
