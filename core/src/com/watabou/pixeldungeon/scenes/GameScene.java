@@ -208,7 +208,8 @@ public class GameScene extends PixelScene {
 		add( new HealthIndicator() );
 		
 		add( cellSelector = new CellSelector( tiles ) );
-		
+		cellSelector.listener = defaultCellListener;
+
 		StatusPane sb = new StatusPane();
 		sb.camera = uiCamera;
 		sb.setSize( uiCamera.width, 0 );

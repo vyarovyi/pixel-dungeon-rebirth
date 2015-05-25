@@ -3,6 +3,7 @@ package com.bravepixel.pixeldungeon.android;
 import android.annotation.SuppressLint;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
 
@@ -10,7 +11,9 @@ import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.watabou.gltextures.TextureCache;
 import com.watabou.input.NoosaInputProcessor;
+import com.watabou.noosa.Game;
 import com.watabou.pixeldungeon.PixelDungeon;
+import com.watabou.pixeldungeon.scenes.GameScene;
 import com.watabou.utils.BitmapCache;
 import com.watabou.utils.PDPlatformSupport;
 
