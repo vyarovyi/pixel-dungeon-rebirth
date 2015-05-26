@@ -1,4 +1,4 @@
-Pixel Dungeon
+Pixel Dungeon: Rebirth
 =============
 
 <b>This is a libgdx port of @watabou [pixel-dungeon](https://github.com/watabou/pixel-dungeon)</b>
