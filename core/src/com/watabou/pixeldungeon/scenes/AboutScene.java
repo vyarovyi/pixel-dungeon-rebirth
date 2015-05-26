@@ -17,6 +17,7 @@
  */
 package com.watabou.pixeldungeon.scenes;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.watabou.input.NoosaInputProcessor;
 import com.watabou.noosa.BitmapTextMultiline;
@@ -35,11 +36,15 @@ public class AboutScene extends PixelScene {
     private static final String TXT =
             "Code & graphics: Watabou\n" +
                     "Music: Cube_Code\n\n" +
+
                     "This game is inspired by Brian Walker's Brogue. " +
                     "Try it on Windows, Mac OS or Linux - it's awesome! ;)\n\n" +
                     "Please visit official website for additional info:";
 
     private static final String LNK = "pixeldungeon.watabou.ru";
+
+    private static final String IOS_PORT_TXT =
+            "\n\niOS port: skynet67";
 
     @Override
     public void create() {
@@ -73,6 +78,16 @@ public class AboutScene extends PixelScene {
             }
         };
         add(hotArea);
+
+        if(Gdx.app.getType() == Application.ApplicationType.iOS) {
+            BitmapTextMultiline iosTxt = createMultiline(IOS_PORT_TXT, 8);
+            iosTxt.maxWidth = Math.min(Camera.main.width, 120);
+            iosTxt.measure();
+            add(iosTxt);
+
+            iosTxt.x = link.x;
+            iosTxt.y = link.y + link.height();
+        }
 
         Image wata = Icons.WATA.get();
         wata.x = align((Camera.main.width - wata.width) / 2);
