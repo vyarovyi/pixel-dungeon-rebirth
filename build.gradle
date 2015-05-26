@@ -13,7 +13,7 @@ allprojects {
     apply plugin: "idea"
 
     ext {
-        appName = 'Pixel Dungeon'
+        appName = 'Pixel Dungeon: Rebirth'
         appId = 'com.bravepixel.pixeldungeon'
         buildVersion = '1.7.5a'
 
